@@ -17,6 +17,19 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Results of compilation
+*.jar
+*.class
+
+# Eclipse files
+.metadata/
+.recommenders/
+
+# Misc extra libraries
+javatuples-1.2/
+jcalendar-1.4/
+jdbcconnector/
+
 # =========================
 # Operating System Files
 # =========================
