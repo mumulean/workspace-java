@@ -20,17 +20,22 @@ import java.awt.event.MouseAdapter;
 public class CalcFrameMain extends JFrame {
 
 	/**
-	 * 
+	 * Class fields
 	 */
-	private static final long serialVersionUID = 4160960510158245192L;
-	private JPanel contentPane;
+	private static final long serialVersionUID = 4160960510158245192L; //so I don't have a warning for no reason
+	private JPanel contentPane; //the content pane
+	
+	//parallel arrays for the players and panels
 	protected Player[] players;
 	protected PlayerPanel[] panels;
+	
+	//starting life points, which all players share
 	protected int startLP;
-	private JButton btnDRAW;
-	private JButton btnResetGame;
-	private JPanel playerArea;
-	private JScrollPane scrollPane;
+	
+	private JButton btnDRAW; //if a Duel manages to end in a draw, set all LP to 0
+	private JButton btnResetGame; //reset current game state to how it was when it began
+	private JPanel playerArea; //a place where the PlayerPanel array goes
+	private JScrollPane scrollPane; //holds the playerArea
 
 	/**
 	 * Launch the application.
@@ -53,7 +58,7 @@ public class CalcFrameMain extends JFrame {
 	 */
 	public CalcFrameMain() {
 		setTitle("Yu-Gi-Oh! Life Point Scoreboard");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 640, 480);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -62,13 +67,14 @@ public class CalcFrameMain extends JFrame {
 		
 		scrollPane = new JScrollPane();
 		scrollPane.addMouseListener(new MouseAdapter() {
-			@Override
+			@Override //force the viewport to refresh itself (so the controls on each player panel don't "smudge")
 			public void mouseEntered(MouseEvent arg0) {
 				updateUI();
 			}
 		});
 
 		scrollPane.addMouseWheelListener(new MouseWheelListener() {
+			//same as above listener, except when the mouse wheel is moved.
 			public void mouseWheelMoved(MouseWheelEvent arg0) {
 				updateUI();
 			}
@@ -86,24 +92,25 @@ public class CalcFrameMain extends JFrame {
 		contentPane.add(buttonPanel, BorderLayout.SOUTH);
 		buttonPanel.setLayout(new GridLayout(0, 3, 0, 0));
 		
-		JButton btnNewGame = new JButton("New Game");
+		JButton btnNewGame = new JButton("New Game"); //button to cause a new dialog box to appear.
 		btnNewGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				playerArea.removeAll();
-				revalidate();
-				//Open the new game dialog box
-				players = newGame();
-				//Should return the array of players when all is said and done
-				
-				if (players != null) {
+
+				//open the new game dialog box
+				//if the players are confirmed, only then will the UI update
+				if (newGame()) {
+					playerArea.removeAll(); //remove the previous game completely
+					revalidate(); //force UI to update
+					//redeclare players and panels accordingly
 					panels = new PlayerPanel[players.length];
-					//Then make a player panel for each one and add it to the panel in the scroll pane.
+					//For each player, initialize a PlayerPanel 
+					//and add it to the panel in the scroll pane.
 					for (int i = 0; i < players.length; i++) {
 						panels[i] = new PlayerPanel(players[i].name, players[i].getStartLP());
 						playerArea.add(panels[i]);
 					}
-					revalidate();
-					btnDRAW.setEnabled(true);
+					revalidate(); //force UI to update again
+					btnDRAW.setEnabled(true); //set these two buttons to enabled
 					btnResetGame.setEnabled(true);
 				}
 			}
@@ -113,9 +120,8 @@ public class CalcFrameMain extends JFrame {
 		btnDRAW = new JButton("DRAW");
 		btnDRAW.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//iterate over player panels and call the surrender functions or whatever
+				//iterate over player panels and call the DRAW function
 				//so that 0 LP is a thing for all at the same time.
-				//add DRAW function to playerPanel
 				for (int i = 0; i < panels.length; i++) {
 					panels[i].DRAW();
 				}
@@ -129,7 +135,6 @@ public class CalcFrameMain extends JFrame {
 		btnResetGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//set all players back into the game
-				//add a reset function to playerPanel
 				for (int i = 0; i < panels.length; i++) {
 					panels[i].reset();
 				}
@@ -139,31 +144,30 @@ public class CalcFrameMain extends JFrame {
 		btnResetGame.setEnabled(false);
 		buttonPanel.add(btnResetGame);
 	}
-
-	public JButton getBtnDRAW() {
-		return btnDRAW;
-	}
-	protected JButton getBtnResetGame() {
-		return btnResetGame;
-	}
 	
 	private void updateUI() {
-		if (panels != null) {
-		playerArea.updateUI();
-		scrollPane.revalidate();
-		
-		for (int i = 0; i < panels.length; i++) {
-			panels[i].revalidate();
-			panels[i].updateUI();
-		}
+		if (panels != null) { //make sure there are panels to refresh
+			//refresh the view on request.
+			playerArea.updateUI();
+			scrollPane.revalidate();
+			//same for each of these.
+			for (int i = 0; i < panels.length; i++) {
+				panels[i].revalidate();
+				panels[i].updateUI();
+			}
 		}
 	}
 	
-	private Player[] newGame() {
+	private boolean newGame() {
+		//create the NewGameDialog box
 		NewGameDialog dialog = new NewGameDialog();
-		dialog.setVisible(true);
+		dialog.setVisible(true); //show the dialog box
 		
-		return dialog.getPlayers();
+		//return its value once the user is done.
+		if (dialog.confirmed) { //if the user confirms their load, then alter the players array
+			players = dialog.getPlayers();
+		}
+		return dialog.confirmed; //return the confirmed value regardless
 	}
 	
 }

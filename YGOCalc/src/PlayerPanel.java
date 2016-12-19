@@ -13,9 +13,10 @@ import java.awt.event.ActionEvent;
 
 public class PlayerPanel extends JPanel {
 	/**
-	 * 
+	 * Class fields
 	 */
 	private static final long serialVersionUID = 4718972507793552246L;
+
 	private JProgressBar lpBar;
 	private JLabel lblName;
 	private Player p;
@@ -115,31 +116,24 @@ public class PlayerPanel extends JPanel {
 		
 		
 	}
-
-	public JProgressBar getLpBar() {
-		return lpBar;
-	}
-	public JLabel getLblName() {
-		return lblName;
-	}
 	
 	public void setPlayer(String name, int start) {
-		p = new Player(name, start);
+		p = new Player(name, start); //initialize the player object
 	}
 	
-	public void DRAW() {
+	public void DRAW() { //used by the DRAW button on the main frame
 		p.setLP(0);
 		lpBar.setValue(0);
 		updateUI();
 	}
 	
-	public void reset() {
+	public void reset() { //used by the reset button on the main frame
 		p.setLP(lpBar.getMaximum());
 		lpBar.setValue(p.getStartLP());
 	}
 	
 	public void updateUI() {
-		if (p != null) {
+		if (p != null) { //if the player exists
 			double percent = p.getPercent();
 			if (percent == 1.0 && p.getLP() > p.getStartLP()) {
 				lpBar.setForeground(new Color(0, 128, 255));
@@ -161,12 +155,12 @@ public class PlayerPanel extends JPanel {
 		}
 	}
 	
-	private void doDialog() {
+	private void doDialog() { //summons this player's dialog box 
 		PlayerDialog dialog = new PlayerDialog();
 		dialog.setPlayerValues(p.getName(), p.getLP(), p.getStartLP());
 		dialog.setVisible(true);
 		
-		if (dialog.changeOK()) {
+		if (dialog.changeOK()) { //ensure the user wanted to change the values
 			Player temp = dialog.getPlayerValues();
 			p.setLP(temp.getLP());
 		}

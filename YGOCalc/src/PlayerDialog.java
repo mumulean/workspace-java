@@ -6,6 +6,8 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import java.awt.GridLayout;
@@ -19,7 +21,7 @@ import java.awt.event.ActionEvent;
 public class PlayerDialog extends JDialog {
 
 	/**
-	 * 
+	 * Fields
 	 */
 	private static final long serialVersionUID = 2650786186996776303L;
 	private final JPanel contentPanel = new JPanel();
@@ -46,6 +48,7 @@ public class PlayerDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public PlayerDialog() {
+		//Ensure the dialog interrupts the rest of the program.
 		setModalityType(ModalityType.APPLICATION_MODAL);
 		setModal(true);
 		setBounds(100, 100, 450, 300);
@@ -63,7 +66,7 @@ public class PlayerDialog extends JDialog {
 			JPanel changePanel = new JPanel();
 			contentPanel.add(changePanel, BorderLayout.SOUTH);
 			changePanel.setLayout(new GridLayout(3, 4, 0, 0));
-			{
+			{ //redundant code below; first 8 buttons subtract or add the appropriate amount of LP
 				JButton btnMin1000 = new JButton("-1000");
 				btnMin1000.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
@@ -146,7 +149,7 @@ public class PlayerDialog extends JDialog {
 			{
 				JButton btnCustom = new JButton("Use Value");
 				btnCustom.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
+					public void actionPerformed(ActionEvent e) { //button that uses the value from the spinner as an add or subtract
 						p.modLPByValue((Integer)customValSpinner.getValue());
 						updateUI();
 					}
@@ -164,12 +167,13 @@ public class PlayerDialog extends JDialog {
 				btnSetTo.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						int temp = (Integer)customValSpinner.getValue();
-						if (temp >= 0) {
+						if (temp >= 0) { //ensure the user is setting the LP to a nonnegative value
 							p.setLP(temp);
 							updateUI();
 						}
 						else {
-							//show error
+							//show user's error
+							JOptionPane.showMessageDialog(null, "Error! You can't set a player's life points to be negative.", "Error", JOptionPane.ERROR_MESSAGE);
 						}
 					}
 				});
@@ -177,7 +181,7 @@ public class PlayerDialog extends JDialog {
 				changePanel.add(btnSetTo);
 			}
 			{
-				JButton btnHalve = new JButton("Halve LP");
+				JButton btnHalve = new JButton("Halve LP"); //calls the halve function on the player's LP.
 				btnHalve.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						p.halveLP();
@@ -188,6 +192,7 @@ public class PlayerDialog extends JDialog {
 			}
 		}
 		{
+			//default values
 			hpBar = new JProgressBar();
 			hpBar.setFont(new Font("Arial Black", Font.PLAIN, 50));
 			hpBar.setStringPainted(true);
@@ -228,6 +233,7 @@ public class PlayerDialog extends JDialog {
 		}
 	}
 	
+	//set the appropriate fields in this dialog with the player's fields
 	public void setPlayerValues(String name, int curLp, int startLP){
 		setTitle(name);
 		p = new Player(name, startLP);
@@ -239,15 +245,16 @@ public class PlayerDialog extends JDialog {
 	}
 	
 	public Player getPlayerValues() {
-		return p;
+		return p; //get the player's values from this dialog
 	}
 	
 	public boolean changeOK() {
-		return keepThis;
+		return keepThis; //if the user clicks false, you don't want the
+						//changes going back to the main frame
 	}
 
 	private void updateUI() {
-		if (p != null) {
+		if (p != null) { //if the player exists, update the UI on this control
 			double percent = p.getPercent();
 			if (percent == 1.0 && p.getLP() > p.getStartLP()) {
 				hpBar.setForeground(new Color(0, 128, 255));

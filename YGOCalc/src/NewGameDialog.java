@@ -36,7 +36,11 @@ public class NewGameDialog extends JDialog {
 	private JTextField textField7;
 	private JTextField textField8;
 	
+	//the player objects themselves
 	private Player[] retVal = null;
+	
+	//whether or not the user WANTED the new game
+	public boolean confirmed = false;
 
 	/**
 	 * Launch the application.
@@ -55,8 +59,10 @@ public class NewGameDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public NewGameDialog() {
+		//ensure that when the dialog box opens, the rest of the program stops
 		setModalityType(ModalityType.APPLICATION_MODAL);
 		setModal(true);
+		
 		setTitle("New Game");
 		setBounds(100, 100, 459, 479);
 		getContentPane().setLayout(new BorderLayout());
@@ -77,6 +83,8 @@ public class NewGameDialog extends JDialog {
 				numOfPlayers.addChangeListener(new ChangeListener() {
 					public void stateChanged(ChangeEvent arg0) {
 						//update the text fields accordingly.
+						//no break statement, do the switch statement
+						//in descending order so that redundant code is decreased
 						int val = (Integer)numOfPlayers.getValue();
 						tempDisableFields();
 						switch (val)  {
@@ -115,13 +123,13 @@ public class NewGameDialog extends JDialog {
 			JPanel centerPanel = new JPanel();
 			centerPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
 			contentPanel.add(centerPanel, BorderLayout.CENTER);
-			centerPanel.setLayout(new GridLayout(8, 2, 0, 0));
+			centerPanel.setLayout(new GridLayout(8, 2, 0, 0)); //center panel contains lots of redundant code
 			{
 				JLabel lblP1 = new JLabel("Player 1's name:");
 				centerPanel.add(lblP1);
 			}
 			{
-				textField1 = new JTextField();
+				textField1 = new JTextField(); 
 				centerPanel.add(textField1);
 				textField1.setColumns(16);
 			}
@@ -206,13 +214,13 @@ public class NewGameDialog extends JDialog {
 						//Return an array of players
 						String[] names = readFields();
 						int start = (Integer)startingLP.getValue();
-						retVal = new Player[names.length];
+						retVal = new Player[names.length]; //initalize the players
 						for (int i = 0; i < names.length; i++) {
-							retVal[i] = new Player(names[i], start);
+							retVal[i] = new Player(names[i], start); //return them to the caller
 						}
-						
+						confirmed = true;
 						setVisible(false);
-						dispose();
+						dispose(); //get rid of it
 					}
 				});
 				okButton.setActionCommand("OK");
@@ -224,6 +232,7 @@ public class NewGameDialog extends JDialog {
 				cancelButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
 						retVal = null;
+						confirmed = false; //user did NOT want the new game.
 						setVisible(false);
 						dispose();
 					}
@@ -233,18 +242,16 @@ public class NewGameDialog extends JDialog {
 			}
 		}
 	}
-
-	public JSpinner getStartingLP() {
-		return startingLP;
-	}
-	public JSpinner getNumOfPlayers() {
-		return numOfPlayers;
-	}
 	
+	//returns the player array, which may be null (no new game)
 	public Player[] getPlayers() {
 		return retVal;
 	}
 	
+	//helper function
+	//disables all 8 fields
+	//so that they can be re-enabled when the 
+	//numOfPlayers spinner is changed
 	private void tempDisableFields() {
 		textField1.setEnabled(false);
 		textField2.setEnabled(false);
@@ -257,11 +264,13 @@ public class NewGameDialog extends JDialog {
 	}
 	
 	private String[] readFields() {
-		//update the text fields accordingly.
+		//get the value from numOfPlayers
 		int val = (Integer)numOfPlayers.getValue();
+		
+		//init a return array accordingly.
 		String[] returnValue = new String[val];
 		
-		switch (val) {
+		switch (val) { //dependent on Val, query the appropriate text fields
 			case 3:
 				returnValue[0] = textField1.getText();
 				returnValue[1] = textField2.getText();
