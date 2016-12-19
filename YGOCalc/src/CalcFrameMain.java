@@ -84,7 +84,7 @@ public class CalcFrameMain extends JFrame {
 		contentPane.add(scrollPane, BorderLayout.CENTER);
 		
 		playerArea = new JPanel();
-		playerArea.setBackground(Color.BLACK);
+		playerArea.setBackground(Color.WHITE);
 		scrollPane.setViewportView(playerArea);
 		playerArea.setLayout(new GridLayout(0, 1, 0, 0));
 		

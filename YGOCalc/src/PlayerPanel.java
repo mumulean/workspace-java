@@ -29,7 +29,7 @@ public class PlayerPanel extends JPanel {
 		setLayout(new BorderLayout(0, 0));
 		
 		lblName = new JLabel("Player");
-		lblName.setBackground(Color.WHITE);
+		lblName.setForeground(Color.WHITE);
 		lblName.setFont(new Font("Arial", Font.PLAIN, 36));
 		lblName.setHorizontalAlignment(SwingConstants.CENTER);
 		add(lblName, BorderLayout.NORTH);
