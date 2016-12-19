@@ -93,8 +93,6 @@ public class TLGFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String temp = cmdField.getText();
 				cmdField.setText("");
-				//here would be where we'd grab the results of player's
-				//action as a String and place it into the textArea
 				try {
 					String ret = game.parseCommand(temp);
 					txtCommands.append(ret);
