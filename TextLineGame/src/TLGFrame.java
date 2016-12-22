@@ -96,6 +96,7 @@ public class TLGFrame extends JFrame {
 				try {
 					String ret = game.parseCommand(temp);
 					txtCommands.append(ret);
+					checkGameOver();
 				} catch (Exception ex) {
 					// TODO Auto-generated catch block
 					ex.printStackTrace();
@@ -115,6 +116,13 @@ public class TLGFrame extends JFrame {
 		catch (Exception e) {
 			txtCommands.append("An error has occurred!");
 			System.exit(ERROR);
+		}
+	}
+	
+	public void checkGameOver() {
+		if (game != null && !game.inProgress) {
+			setVisible(false);
+			dispose();
 		}
 	}
 

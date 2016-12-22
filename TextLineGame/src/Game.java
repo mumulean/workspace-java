@@ -1,9 +1,10 @@
 import java.sql.*;
+import java.util.*;
 public class Game {
 	
 	private int location;
 	private String currentMap = "Tyrant's Town";
-	
+	public HashMap<Integer, Room> allRooms;
 	public Connection c = null;
 	public String errorString = "";
 	public boolean inProgress = true;
@@ -31,18 +32,28 @@ public class Game {
 		PreparedStatement ps = c.prepareStatement("SELECT initial_id FROM maps"
 				+ " WHERE name = ?");
 		ps.setString(1, currentMap);
-		
+
 		ResultSet firstLoc = ps.executeQuery();
 		location = firstLoc.getInt(1);
+		
+		allRooms = new HashMap<Integer, Room>();
+		
+		PreparedStatement ps2 = c.prepareStatement("SELECT * From Rooms");
+		
+		ResultSet getMaps = ps2.executeQuery();
+		while (getMaps.next()) {
+			int rId = getMaps.getInt(1);
+			String rName =  getMaps.getString(2);
+			String rDesc = getMaps.getString(3);
+			
+			allRooms.put(rId, new Room(rId, rName, rDesc));
+		}
 	}
 	
 	public String doLook() throws Exception {
-		PreparedStatement ps = c.prepareStatement("Select name, descript FROM rooms WHERE id = ?");
-		ps.setInt(1, location);
+		Room current = allRooms.get(location);
 		
-		ResultSet rs = ps.executeQuery();
-		
-		return rs.getString(1) + "\n" + rs.getString(2) + "\n";
+		return current.name + "\n" + current.descript + "\n";
 	}
 	
 	public String doMove(String dir) throws Exception {
@@ -72,20 +83,29 @@ public class Game {
 	}
 	
 	public String parseCommand(String input) throws Exception {
-		if (input.equalsIgnoreCase("look")) {
+		if (input.isEmpty()) {
+			return "";
+		}
+		
+		String[] toks = input.split(" ");
+		
+		if (toks.length < 1 || toks.length > 3) {
+			return "Use one through three words only!\n";
+		}
+		//check if in combat
+		if (toks[0].equalsIgnoreCase("look")) {
 			return doLook();
 		}
-		else if (input.equalsIgnoreCase("north") || input.equalsIgnoreCase("south") || 
-				input.equalsIgnoreCase("east") || input.equalsIgnoreCase("west")) {
-			return doMove(input);
+		else if (toks[0].equalsIgnoreCase("north") || toks[0].equalsIgnoreCase("east") ||
+			toks[0].equalsIgnoreCase("south") || toks[0].equalsIgnoreCase("west")) {
+			return doMove(toks[0]);
 		}
-		else if (input.equalsIgnoreCase("exit") || input.equalsIgnoreCase("done")) {
-			c.close();
+		else if (toks[0].equalsIgnoreCase("exit") || toks[0].equalsIgnoreCase("done")) {
 			inProgress = false;
-			return "Goodbye!\n";
+			return "Thank you for playing. Goodbye!\n";
 		}
-		else {
-			return "Invalid command.\n";
-		}
+		
+		
+		return "Invalid command!\n";
 	}
 }
