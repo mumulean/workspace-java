@@ -2,29 +2,30 @@ import java.sql.*;
 import java.util.*;
 public class Game {
 	
-	private int location;
-	private String currentMap = "Tyrant's Town";
-	public HashMap<Integer, Room> allRooms;
-	public Connection c = null;
 	public String errorString = "";
 	public boolean inProgress = true;
+	
+	private int location;
+	private int gold;
+	private String currentMap = "Tyrant's Town";
+	private HashMap<Integer, Room> allRooms;
+	private Connection c = null;
+	private Player hero;
 	
 	
 	public Game() {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			c = DriverManager.getConnection("jdbc:sqlite:TLG.db");
-			init();
+			init(); //pass to init handler method
+			generateHero(); 
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			errorString = "Failed to find the database!";
 		}
 		
-		//First we query the maps table for the relevant starting id
-		//Then we query the rooms table with the starting id.
-		//Each time we do a move command (north/south/west/east)
-		//we move in that direction.
+		
 	}
 
 	private void init() throws Exception {
@@ -48,6 +49,27 @@ public class Game {
 			
 			allRooms.put(rId, new Room(rId, rName, rDesc));
 		}
+		
+	}
+	
+	private void generateHero() {
+		boolean flag = true;	
+		do {
+			CharacterGenerator gen = new CharacterGenerator();
+			gen.setVisible(true);
+			flag = gen.charOK;
+			
+			if (gen.charOK) {
+				HashMap<String, Integer> tempStats = gen.playerAttribs;
+				hero = new Player(gen.playerClass, gen.playerName, gen.playerGender, 
+						tempStats.get("Max_HP"), tempStats.get("Max_MP"), tempStats.get("Strength"),
+						tempStats.get("Power"), tempStats.get("Endurance"), tempStats.get("Speed"));
+			}
+			
+		} while (!flag);
+		
+		//TODO set starting inventory
+		gold = (int)(Math.ceil(Math.random() * 10) * 10) + 100;
 	}
 	
 	public String doLook() throws Exception {
@@ -100,12 +122,14 @@ public class Game {
 			toks[0].equalsIgnoreCase("south") || toks[0].equalsIgnoreCase("west")) {
 			return doMove(toks[0]);
 		}
+		else if (toks[0].equalsIgnoreCase("stats")) {
+			return hero.viewInfo() + "\n";
+		}
 		else if (toks[0].equalsIgnoreCase("exit") || toks[0].equalsIgnoreCase("done")) {
 			inProgress = false;
 			return "Thank you for playing. Goodbye!\n";
 		}
-		
-		
+
 		return "Invalid command!\n";
 	}
 }

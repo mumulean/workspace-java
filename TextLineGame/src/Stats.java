@@ -60,7 +60,7 @@ public class Stats {
 			}
 		}
 		finalValue *= factor;
-		return String.format("0.2d", Double.toString(finalValue));
+		return String.format("%1$,.0f", finalValue);
 	}
 	
 	public String getStatBlock() {
@@ -86,6 +86,64 @@ public class Stats {
 		block += "----------------------\n";
 		
 		return block;
+	}
+	
+	public static HashMap<String, Integer> getStartingBaseStats(Player.ClassType playerClass) {
+		HashMap<String, Integer> returnMe = new HashMap<String, Integer>();
+		
+		switch (playerClass) {
+			case BRAWLER:
+				returnMe.put("HP", 45);
+				returnMe.put("Max_HP", 45);
+				returnMe.put("MP", 30);
+				returnMe.put("Max_MP", 30);
+				returnMe.put("Strength", 13);
+				returnMe.put("Power", 8);
+				returnMe.put("Endurance", 9);
+				returnMe.put("Speed", 8);
+				break;
+			case SHOOTER:
+				returnMe.put("HP", 35);
+				returnMe.put("Max_HP", 35);
+				returnMe.put("MP", 50);
+				returnMe.put("Max_MP", 50);
+				returnMe.put("Strength", 9);
+				returnMe.put("Power", 13);
+				returnMe.put("Endurance", 9);
+				returnMe.put("Speed", 8);
+				break;
+			case TANK:
+				returnMe.put("HP", 55);
+				returnMe.put("Max_HP", 55);
+				returnMe.put("MP", 35);
+				returnMe.put("Max_MP", 35);
+				returnMe.put("Strength", 10);
+				returnMe.put("Power", 7);
+				returnMe.put("Endurance", 14);
+				returnMe.put("Speed", 7);
+				break;
+			case THIEF:
+				returnMe.put("HP", 35);
+				returnMe.put("Max_HP", 35);
+				returnMe.put("MP", 35);
+				returnMe.put("Max_MP", 35);
+				returnMe.put("Strength", 8);
+				returnMe.put("Power", 10);
+				returnMe.put("Endurance", 8);
+				returnMe.put("Speed", 14);
+				break;
+			default:
+				returnMe.put("HP", 50);
+				returnMe.put("Max_HP", 50);
+				returnMe.put("MP", 50);
+				returnMe.put("Max_MP", 50);
+				returnMe.put("Strength", 10);
+				returnMe.put("Power", 10);
+				returnMe.put("Endurance", 10);
+				returnMe.put("Speed", 10);
+				break;
+		}
+		return returnMe;
 	}
 	
 }

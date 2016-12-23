@@ -2,31 +2,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 public class Actor {
 	
-	enum StatusAliment { HEALTHY, POISON };
+	public enum StatusAliment { HEALTHY, POISON };
+	public enum Gender { MALE, FEMALE, NEITHER };
 
-	private String name;
-	private String gender;
-	private StatusAliment status;
+	protected String name;
+	protected Gender gender;
+	protected StatusAliment status;
 	
 	//Attributes
-	public Stats attributes;
+	protected Stats attributes;
 	
 	//Skills List
-	private ArrayList<String> skillNames;
+	protected ArrayList<String> skillNames;
 	
-	public Actor(String nm, int gend, int max_hp, int max_mp, 
+	public Actor(String nm, Gender gend, int max_hp, int max_mp, 
 			int str, int pow, int end, int spd) {
 		status = StatusAliment.HEALTHY;
 		skillNames = new ArrayList<String>();
 		
 		name = nm;
-		
-		if (gend < 1 || gend > 2) {
-			gender = "Neither/Genderless";
-		}
-		else {
-			gender = (gend == 1) ? "Male" : "Female";
-		}
+		gender = gend;
 		
 		HashMap<String, Integer> stats = new HashMap<String, Integer>();
 		
@@ -40,6 +35,7 @@ public class Actor {
 		stats.put("Speed", spd);
 		
 		attributes = new Stats(stats);
+		skillNames = new ArrayList<String>();
 	}
 	
 	public void refresh() {
@@ -81,16 +77,21 @@ public class Actor {
 		return (attributes.baseStats.get("HP") <= 0);
 	}
 	
-	public boolean useSkill(String skillName) {
+	public boolean useSkill(String skName) {
 		return false;
 	}
 	
 	public String getStats() {
-		String ret = "Name: " + name + "\n";
+		String ret = "----------------------\n"; 
+		ret += "Name: " + name + "\n";
 		ret += "Gender: " + gender + "\n";
 		ret += "Status: " + status.toString() + "\n";
 		String statBlock = attributes.getStatBlock();
 		
 		return ret + statBlock;
+	}
+	
+	public void addSkill(String skName) {
+		skillNames.add(skName);
 	}
 }
