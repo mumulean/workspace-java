@@ -6,6 +6,7 @@ public class Player extends Actor {
 	long xp;
 	int level;
 	HashMap<Integer, Long> xpTable;
+	HashMap<String, String> equipment;
 	final int MAX_LEVEL = 10;
 	
 	/*
@@ -13,6 +14,11 @@ public class Player extends Actor {
 	 */
 	public Player(String nm, Gender gend, int max_hp, int max_mp, int str, int pow, int end, int spd) {
 		super(nm, gend, max_hp, max_mp, str, pow, end, spd);
+		equipment = new HashMap<String, String>();
+		equipment.put("HEAD", "Nothing");
+		equipment.put("ARMS", "Nothing");
+		equipment.put("LEGS", "Nothing");
+		equipment.put("TORSO", "Nothing");
 	}
 	
 	public Player(ClassType c, String nm, Gender gend, int max_hp, 
@@ -23,7 +29,11 @@ public class Player extends Actor {
 		level = 1;
 		
 		xpTable = ExpTableLibrary.getTable(name, heroClass);
-		
+		equipment = new HashMap<String, String>();
+		equipment.put("HEAD", "Nothing");
+		equipment.put("ARMS", "Nothing");
+		equipment.put("LEGS", "Nothing");
+		equipment.put("TORSO", "Nothing");
 	}
 	
 	public String viewInfo() {
@@ -35,6 +45,19 @@ public class Player extends Actor {
 		retVal += "----------------------";
 		
 		return retVal;
+	}
+	
+	public String doEquip(String key, String value) {
+		String oldValue = equipment.get(key);
+		equipment.put(key, value);
+		
+		return oldValue;
+	}
+	
+	public String doUnequip(String key) {
+		String oldValue = equipment.get(key);
+		equipment.put(key, "Nothing");
+		return oldValue;
 	}
 	
 	private long calcToNext() {
